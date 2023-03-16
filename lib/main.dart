@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_app/firestore/user_firestore.dart';
 import 'package:flutter_firebase_chat_app/pages/top_page.dart';
 
 import 'firebase_options.dart';
@@ -9,6 +10,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await UserFirestore.createUser();
   runApp(const MyApp());
 }
 
