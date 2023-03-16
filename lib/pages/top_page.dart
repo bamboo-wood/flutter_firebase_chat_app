@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_app/model/user.dart';
+import 'package:flutter_firebase_chat_app/pages/setting_profile_page.dart';
 import 'package:flutter_firebase_chat_app/pages/talk_room_page.dart';
 
 class TopPage extends StatefulWidget {
@@ -35,6 +36,18 @@ class _TopPageState extends State<TopPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Firebase Chat App'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SettingProfilePage(),
+                  ));
+            },
+            icon: const Icon(Icons.settings),
+          )
+        ],
       ),
       body: ListView.builder(
         itemCount: userList.length,
