@@ -16,18 +16,15 @@ class _TopPageState extends State<TopPage> {
       name: 'user1',
       uid: 'uid1',
       imagePath: 'https://picsum.photos/300/300',
-      lastMessage: 'last message1',
     ),
     User(
       name: 'user2',
       uid: 'uid2',
       imagePath: 'https://picsum.photos/300/300',
-      lastMessage: 'last message2',
     ),
     User(
       name: 'user3',
       uid: 'uid3',
-      lastMessage: 'last message3',
     ),
   ];
 
@@ -90,7 +87,7 @@ class _TopPageState extends State<TopPage> {
                       ),
                     ),
                     Text(
-                      user.lastMessage,
+                      'user.lastMessage',
                       style: const TextStyle(
                         color: Colors.black38,
                       ),
