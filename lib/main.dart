@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_firebase_chat_app/firestore/room_firestore.dart';
 import 'package:flutter_firebase_chat_app/firestore/user_firestore.dart';
 import 'package:flutter_firebase_chat_app/pages/top_page.dart';
+import 'package:flutter_firebase_chat_app/utils/shared_prefs.dart';
 
 import 'firebase_options.dart';
 
@@ -11,8 +11,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final myUid = await UserFirestore.createUser();
-  if (myUid != null) await RoomFireStore.createRoom(myUid);
+  await SharedPrefs.setPrefsInstances();
+  String? uid = SharedPrefs.fetchUid();
+  if (uid == null) UserFirestore.createUser;
   runApp(const MyApp());
 }
 
