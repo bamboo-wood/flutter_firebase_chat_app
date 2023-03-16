@@ -25,7 +25,6 @@ class _TopPageState extends State<TopPage> {
     User(
       name: 'user3',
       uid: 'uid3',
-      imagePath: 'https://picsum.photos/300/300',
       lastMessage: 'last message3',
     ),
   ];
@@ -36,7 +35,47 @@ class _TopPageState extends State<TopPage> {
       appBar: AppBar(
         title: const Text('Flutter Firebase Chat App'),
       ),
-      body: const Center(child: Text('This screen is top page')),
+      body: ListView.builder(
+        itemCount: userList.length,
+        itemBuilder: (context, index) {
+          final user = userList[index];
+          return Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  radius: 30,
+                  backgroundImage: user.imagePath == null
+                      ? null
+                      : NetworkImage(user.imagePath!),
+                  child: user.imagePath == null
+                      ? const Icon(Icons.account_circle, size: 50)
+                      : null,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    user.lastMessage,
+                    style: const TextStyle(
+                      color: Colors.black38,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
