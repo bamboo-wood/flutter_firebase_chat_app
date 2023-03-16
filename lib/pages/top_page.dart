@@ -42,7 +42,7 @@ class _TopPageState extends State<TopPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SettingProfilePage(),
+                    builder: (context) => const SettingProfilePage(),
                   ));
             },
             icon: const Icon(Icons.settings),

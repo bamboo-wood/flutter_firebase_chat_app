@@ -128,7 +128,7 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                       onPressed: () {
                         // TODO: send
                       },
-                      icon: Icon(Icons.send),
+                      icon: const Icon(Icons.send),
                     )
                   ],
                 ),
