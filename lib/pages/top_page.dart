@@ -77,7 +77,7 @@ class TalkRoomList extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => TalkRoomPage(
-                  name: talkRoom.talkUser.name,
+                  talkRoom: talkRoom,
                 ),
               ),
             );
