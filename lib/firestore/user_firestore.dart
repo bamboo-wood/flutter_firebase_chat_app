@@ -18,4 +18,17 @@ class UserFirestore {
       print('$e');
     }
   }
+
+  static Future<void> fetchUsers() async {
+    try {
+      final snapshot = await _userCollection.get();
+      for (var doc in snapshot.docs) {
+        print('Document ID: ${doc.id}');
+        print('Name: ${doc.data()['name']}');
+      }
+    } catch (e) {
+      print('Failed to fetch user information.');
+      print('$e');
+    }
+  }
 }
