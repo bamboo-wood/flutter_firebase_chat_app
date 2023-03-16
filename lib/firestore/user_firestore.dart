@@ -4,8 +4,7 @@ import 'package:flutter_firebase_chat_app/model/user.dart';
 import 'package:flutter_firebase_chat_app/utils/shared_prefs.dart';
 
 class UserFirestore {
-  static final FirebaseFirestore _firebaseFirestoreInstance =
-      FirebaseFirestore.instance;
+  static final FirebaseFirestore _firebaseFirestoreInstance = FirebaseFirestore.instance;
   static final _userCollection = _firebaseFirestoreInstance.collection('users');
 
   static Future<String?> insertNewAccount() async {

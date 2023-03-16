@@ -13,7 +13,7 @@ void main() async {
   );
   await SharedPrefs.setPrefsInstances();
   String? uid = SharedPrefs.fetchUid();
-  if (uid == null) UserFirestore.createUser;
+  if (uid == null) await UserFirestore.createUser();
   runApp(const MyApp());
 }
 

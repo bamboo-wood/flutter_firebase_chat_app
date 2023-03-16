@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_app/firestore/room_firestore.dart';
 import 'package:flutter_firebase_chat_app/model/talk_room.dart';
-import 'package:flutter_firebase_chat_app/model/user.dart';
 import 'package:flutter_firebase_chat_app/pages/setting_profile_page.dart';
 import 'package:flutter_firebase_chat_app/pages/talk_room_page.dart';
 
@@ -36,14 +35,14 @@ class _TopPageState extends State<TopPage> {
           stream: RoomFireStore.joinedRoomSnapshot,
           builder: (context, streamSnapshot) {
             if (streamSnapshot.hasData) {
-              return FutureBuilder<List<TalkRoom>>(
+              return FutureBuilder(
                 future: RoomFireStore.fetchJoinedRooms(streamSnapshot.data!),
                 builder: (context, futureSnapshot) {
                   if (futureSnapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (!futureSnapshot.hasData) {
-                    return const Text('No talk rooms.');
+                    return const Center(child: Text('No talk rooms.'));
                   }
                   List<TalkRoom> talkRooms = futureSnapshot.data!;
                   return TalkRoomList(talkRooms: talkRooms);

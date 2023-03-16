@@ -15,6 +15,8 @@ class TalkRoomPage extends StatefulWidget {
 }
 
 class _TalkRoomPageState extends State<TalkRoomPage> {
+  final TextEditingController messageController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,6 +30,9 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
             StreamBuilder<QuerySnapshot>(
                 stream: RoomFireStore.fetchMessageSnapshot(widget.talkRoom.roomId),
                 builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                   if (!snapshot.hasData) {
                     return const Center(child: Text('No message.'));
                   }
@@ -96,11 +101,12 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: TextField(
-                              decoration: InputDecoration(
+                              controller: messageController,
+                              decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.only(left: 10),
                                 border: OutlineInputBorder(),
                               ),
@@ -108,8 +114,13 @@ class _TalkRoomPageState extends State<TalkRoomPage> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            // TODO: send
+                          onPressed: () async {
+                            if (messageController.text.isEmpty) return;
+                            await RoomFireStore.sendMessage(
+                              widget.talkRoom.roomId,
+                              messageController.text,
+                            );
+                            messageController.clear();
                           },
                           icon: const Icon(Icons.send),
                         )

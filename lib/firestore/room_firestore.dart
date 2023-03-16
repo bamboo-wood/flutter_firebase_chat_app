@@ -28,7 +28,7 @@ class RoomFireStore {
     }
   }
 
-  static Future<List<TalkRoom>> fetchJoinedRooms(QuerySnapshot snapshot) async {
+  static Future<List<TalkRoom>?> fetchJoinedRooms(QuerySnapshot snapshot) async {
     List<TalkRoom> talkRooms = [];
 
     try {
@@ -48,7 +48,7 @@ class RoomFireStore {
     } catch (e) {
       print('Failed to fetch my talk rooms.');
       print('$e');
-      rethrow;
+      return null;
     }
   }
 
@@ -79,5 +79,23 @@ class RoomFireStore {
         .collection('messages')
         .orderBy('send_time', descending: true)
         .snapshots();
+  }
+
+  static Future<void> sendMessage(String roomId, String message) async {
+    try {
+      final messageCollection = _roomCollection.doc(roomId).collection('messages');
+      await messageCollection.add({
+        'message': message,
+        'sender_id': SharedPrefs.fetchUid(),
+        'send_time': Timestamp.now(),
+      });
+
+      _roomCollection.doc(roomId).update({
+        'last_message': message,
+      });
+    } catch (e) {
+      print('Failed to send a message.');
+      print('$e');
+    }
   }
 }
