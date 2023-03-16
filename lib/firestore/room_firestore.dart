@@ -5,9 +5,10 @@ import 'package:flutter_firebase_chat_app/model/user.dart';
 import 'package:flutter_firebase_chat_app/utils/shared_prefs.dart';
 
 class RoomFireStore {
-  static final FirebaseFirestore _firebaseFirestoreInstance =
-      FirebaseFirestore.instance;
+  static final FirebaseFirestore _firebaseFirestoreInstance = FirebaseFirestore.instance;
   static final _roomCollection = _firebaseFirestoreInstance.collection('rooms');
+  static final joinedRoomSnapshot =
+      _roomCollection.where('joined_user_ids', arrayContains: SharedPrefs.fetchUid()).snapshots();
 
   static Future<void> createRoom(String myUid) async {
     try {
@@ -27,35 +28,48 @@ class RoomFireStore {
     }
   }
 
-  static Future<void> fetchJoinedRooms() async {
+  static Future<List<TalkRoom>> fetchJoinedRooms(QuerySnapshot snapshot) async {
+    List<TalkRoom> talkRooms = [];
+
     try {
-      String myUid = SharedPrefs.fetchUid()!;
-
-      final snapshot = await _roomCollection
-          .where('joined_user_ids', arrayContains: myUid)
-          .get();
-
-      List<TalkRoom> talkRooms = [];
+      String? myUid = SharedPrefs.fetchUid();
+      if (myUid == null) {
+        throw Exception('My user ID not found.');
+      }
 
       for (var doc in snapshot.docs) {
-        List<dynamic> userIds = doc.data()['joined_user_ids'];
-        late String talkUserUid;
-        for (var id in userIds) {
-          if (id == myUid) continue;
-          talkUserUid = id;
-        }
-        User? talkUser = await UserFirestore.fetchProfile(talkUserUid);
-        if (talkUser == null) continue;
-        final talkRoom = TalkRoom(
-          roomId: doc.id,
-          talkUser: talkUser,
-          lastMessage: doc.data()['last_message'],
-        );
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        TalkRoom? talkRoom = await _createTalkRoom(doc.id, data, myUid);
+        if (talkRoom == null) continue;
         talkRooms.add(talkRoom);
       }
+
+      return talkRooms;
     } catch (e) {
       print('Failed to fetch my talk rooms.');
       print('$e');
+      rethrow;
     }
+  }
+
+  static Future<TalkRoom?> _createTalkRoom(
+      String roomId, Map<String, dynamic> data, String myUid) async {
+    List<dynamic> userIds = data['joined_user_ids'];
+    String? talkUserUid = userIds.firstWhere((id) => id != myUid, orElse: () => null);
+
+    if (talkUserUid == null) {
+      return null;
+    }
+
+    User? talkUser = await UserFirestore.fetchProfile(talkUserUid);
+    if (talkUser == null) {
+      return null;
+    }
+
+    return TalkRoom(
+      roomId: roomId,
+      talkUser: talkUser,
+      lastMessage: data['last_message'],
+    );
   }
 }
