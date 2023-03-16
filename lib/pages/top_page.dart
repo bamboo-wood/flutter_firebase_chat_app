@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_chat_app/model/user.dart';
+import 'package:flutter_firebase_chat_app/pages/talk_room_page.dart';
 
 class TopPage extends StatefulWidget {
   const TopPage({super.key});
@@ -39,40 +40,52 @@ class _TopPageState extends State<TopPage> {
         itemCount: userList.length,
         itemBuilder: (context, index) {
           final user = userList[index];
-          return Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  radius: 30,
-                  backgroundImage: user.imagePath == null
-                      ? null
-                      : NetworkImage(user.imagePath!),
-                  child: user.imagePath == null
-                      ? const Icon(Icons.account_circle, size: 50)
-                      : null,
+          return InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TalkRoomPage(
+                    name: user.name,
+                  ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    user.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+              );
+            },
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundImage: user.imagePath == null
+                        ? null
+                        : NetworkImage(user.imagePath!),
+                    child: user.imagePath == null
+                        ? const Icon(Icons.account_circle, size: 50)
+                        : null,
                   ),
-                  Text(
-                    user.lastMessage,
-                    style: const TextStyle(
-                      color: Colors.black38,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    Text(
+                      user.lastMessage,
+                      style: const TextStyle(
+                        color: Colors.black38,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           );
         },
       ),
