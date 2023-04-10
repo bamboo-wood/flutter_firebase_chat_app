@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -13,6 +14,7 @@ class SettingProfilePage extends StatefulWidget {
 class _SettingProfilePageState extends State<SettingProfilePage> {
   File? image;
   final ImagePicker _picker = ImagePicker();
+  String imagePath = '';
 
   Future<void> selectImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -21,6 +23,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
         image = File(pickedFile.path);
       });
     }
+  }
+
+  Future<void> uploadImage() async {
+    final ref = FirebaseStorage.instance.ref().child('profileImage').child('profileImage.jpg');
+    final storedImage = await ref.putFile(image!);
+    imagePath = await storedImage.ref.getDownloadURL();
   }
 
   @override
@@ -53,8 +61,9 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
                   child: Container(
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                      onPressed: () {
-                        selectImage();
+                      onPressed: () async {
+                        await selectImage();
+                        await uploadImage();
                       },
                       child: const Text('Select Image'),
                     ),
