@@ -61,4 +61,18 @@ class UserFirestore {
       return null;
     }
   }
+
+  static Future<void> updateUser(User newProfile) async {
+    try {
+      await _userCollection.doc(newProfile.uid).update(
+        {
+          'name': newProfile.name,
+          'imagePath': newProfile.imagePath,
+        },
+      );
+    } catch (e) {
+      print('Failed to update user information.');
+      print('$e');
+    }
+  }
 }

@@ -2,7 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_chat_app/firestore/user_firestore.dart';
+import 'package:flutter_firebase_chat_app/utils/shared_prefs.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../model/user.dart';
 
 class SettingProfilePage extends StatefulWidget {
   const SettingProfilePage({super.key});
@@ -16,6 +20,8 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
   final ImagePicker _picker = ImagePicker();
   String imagePath = '';
 
+  final TextEditingController _nameController = TextEditingController();
+
   Future<void> selectImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -26,7 +32,8 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
   }
 
   Future<void> uploadImage() async {
-    final ref = FirebaseStorage.instance.ref().child('profileImage').child('profileImage.jpg');
+    String path = image!.path.substring(image!.path.lastIndexOf('/') + 1, image!.path.length);
+    final ref = FirebaseStorage.instance.ref().child('profileImage').child(path);
     final storedImage = await ref.putFile(image!);
     imagePath = await storedImage.ref.getDownloadURL();
   }
@@ -42,12 +49,16 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
         child: Column(
           children: [
             Row(
-              children: const [
-                SizedBox(
+              children: [
+                const SizedBox(
                   width: 100,
                   child: Text('Name'),
                 ),
-                Expanded(child: TextField()),
+                Expanded(
+                  child: TextField(
+                    controller: _nameController,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 50),
@@ -90,8 +101,12 @@ class _SettingProfilePageState extends State<SettingProfilePage> {
               width: 200,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
-                  //
+                onPressed: () async {
+                  User newProfile = User(
+                      name: _nameController.text,
+                      imagePath: imagePath,
+                      uid: SharedPrefs.fetchUid()!);
+                  await UserFirestore.updateUser(newProfile);
                 },
                 child: const Text('Submit'),
               ),
